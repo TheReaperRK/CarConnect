@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Històric d'Incidències</title>
+        <link rel="stylesheet" href="/styles/stylesHistoric.css">
+    </head>
+    <body>
+        <header>
+            <img src="/images/logo.png" alt="Logo">
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar...">
+            </div>
+            <div class="buttons">
+                <div th:if="${isAuthenticated == false}" id="btn-compte" class="dropdown">
+                    <button  >Compte</button>
+                    <div class="dropdown-content">
+                        <a href="/Registre">Registrarse</a>
+                        <a href="/login">Iniciar sessio</a>
+                    </div>
+                </div>
+
+
+                <div th:if="${isAuthenticated}">
+                    <form th:action="@{/logout}" method="post" >
+                        <button id="btn-cerrar-session" type="submit" class="btn btn-danger" style="display: inline;">Cerrar sessio</button>
+                    </form>
+                </div>
+                <!-- Botón desplegable -->
+                <div class="dropdown">
+                    <button>Més</button>
+                    <div th:if="${isAuthenticated}" class="dropdown-content">
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/clients">Clients</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/agents">Agents</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_VEHICLE','ADMIN')" href="/vehicles">Vehicles</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_RESERVES','ADMIN')" href="/reservas/list">Reserves</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_INCIDENCIES','ADMIN')" href="/incidencias/list">Incidencies</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/localitzacions">Localitzacions</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <a href="/">
+            <button href="/" class="blau-btn">Tornar</button>
+        </a>
+        <a href="/historic/informe">
+            <button class="blau-btn">Veure Informe</button>
+        </a>
+        <h1>Històric d'Incidències</h1>
+        <br>
+
+
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descripció</th>
+                    <th>Cost</th>
+                    <th>Matricula</th>
+                    <th>Oberta</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="historic : ${historics}">
+                    <td th:text="${historic.id}"></td>
+                    <td th:text="${historic.description}"></td>
+                    <td th:text="${historic.cost}"></td>
+                    <td th:text="${historic.vehicleId}"></td>
+                    <td th:text="${historic.aberta ? 'Sí' : 'No'}"></td> <!-- Aquí se usa 'aberta' -->
+                    <td th:text="${historic.fechaFormateada}"></td> <!-- Usar fechaFormateada -->
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
+

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Llista de Localitzacions</title>
+        <link rel="stylesheet" href="/styles/stylesForm.css">
+    </head>
+    <body>
+        <header>
+            <img src="/images/logo.png" alt="Logo">
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar...">
+            </div>
+            <div class="buttons">
+                <div th:if="${isAuthenticated == false}" id="btn-compte" class="dropdown">
+                    <button  >Compte</button>
+                    <div class="dropdown-content">
+                        <a href="/Registre">Registrarse</a>
+                        <a href="/login">Iniciar sessio</a>
+                    </div>
+                </div>
+
+
+                <div th:if="${isAuthenticated}">
+                    <form th:action="@{/logout}" method="post" >
+                        <button id="btn-cerrar-session" type="submit" class="btn btn-danger" style="display: inline;">Cerrar sessio</button>
+                    </form>
+                </div>
+                <!-- Botón desplegable -->
+                <div class="dropdown">
+                    <button>Més</button>
+                    <div th:if="${isAuthenticated}" class="dropdown-content">
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/clients">Clients</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/agents">Agents</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_VEHICLE','ADMIN')" href="/vehicles">Vehicles</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_RESERVES','ADMIN')" href="/reservas/list">Reserves</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_INCIDENCIES','ADMIN')" href="/incidencias/list">Incidencies</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/localitzacions">Localitzacions</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div>
+            <br>
+            <a href="/">
+                <button class="blau-btn">Tornar</button>
+            </a>
+            <h1>Gestió de localitzacions</h1>
+            <br>
+        </div>
+
+        <!-- Formulario de filtro -->
+        <form action="/localitzacions/filter" method="get">
+            <div>
+                <label for="CodiPostal">Codi Postal:</label>
+                <input type="text" id="codiPostal" name="codiPostal" placeholder="Codi Postal" />
+
+                <label for="comunitatAutonoma">Comunitat Autònoma:</label>
+                <input type="text" id="comunitatAutonoma" name="comunitatAutonoma" placeholder="Comunitat Autonòmica" />
+
+                <label for="provincia">Província:</label>
+                <input type="text" id="provincia" name="provincia" placeholder="Província" />
+
+                <label for="ciutat">Ciutat:</label>
+                <input type="text" id="ciutat" name="ciutat" placeholder="Ciutat" />
+
+                <button type="submit">Filtrar</button>
+            </div>
+        </form>
+
+        <main class="main-container">
+            <section class="table-container">
+                <h2>Lista de Localitzacions</h2>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Codi Postal</th>
+                            <th scope="col">Comunitat Autònoma</th>
+                            <th scope="col">Província</th>
+                            <th scope="col">Ciutat</th>
+                            <th scope="col">Carrer</th>
+                            <th scope="col">Número</th>
+                            <th scope="col">Accions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="localitzacio, rowStat : ${localitzacions}" th:id="${rowStat.index}" class="expandable-row">
+                            <td th:text="${localitzacio.codiPostal}" scope="row"></td>
+                            <td th:text="${localitzacio.comunitatAutonoma}"></td>
+                            <td th:text="${localitzacio.provincia}"></td>
+                            <td th:text="${localitzacio.ciutat}"></td>
+                            <td th:text="${localitzacio.carrer}"></td>
+                            <td th:text="${localitzacio.num}"></td>
+                            <td>
+                                <!-- Enlaces para editar y eliminar -->
+                                <a th:href="@{'/localitzacions/edit/' + ${localitzacio.codiPostal}}" class="btn btn-edit">Editar</a>
+                                <a th:href="@{'/localitzacions/delete/' + ${localitzacio.codiPostal}}" class="btn btn-delete" 
+                                   onclick="return confirm('¿Está seguro de eliminar esta Localització?');">Eliminar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button onclick="location.href = '/localitzacions/create'" class="btn btn-create">Crear Nova Localització</button>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Gestió de Localitzacions</p>
+        </footer>
+        <!-- Referencia al script externo -->
+        <script src="/scripts/main.js"></script>
+    </body>
+</html>

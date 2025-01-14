@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Llista de Agents</title>
+        <link rel="stylesheet" href="/styles/stylesForm.css">
+    </head>
+    <body>
+        <header>
+            <img src="/images/logo.png" alt="Logo">
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar...">
+            </div>
+            <div class="buttons">
+                <div th:if="${isAuthenticated == false}" id="btn-compte" class="dropdown">
+                    <button  >Compte</button>
+                    <div class="dropdown-content">
+                        <a href="/Registre">Registrarse</a>
+                        <a href="/login">Iniciar sessio</a>
+                    </div>
+                </div>
+
+
+                <div th:if="${isAuthenticated}" id="btn-compte" class="dropdown">
+                    <form th:action="@{/logout}" method="post" >
+                        <button id="btn-cerrar-session" type="submit" class="btn btn-danger" style="display: inline;">Cerrar sessio</button>
+                    </form>
+                </div>
+                <!-- Botón desplegable -->
+                <div class="dropdown">
+                    <button>Més</button>
+                    <div th:if="${isAuthenticated}" class="dropdown-content">
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/clients">Clients</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/agents">Agents</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_VEHICLE','ADMIN')" href="/vehicles">Vehicles</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_RESERVES','ADMIN')" href="/reservas/list">Reserves</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_INCIDENCIES','ADMIN')" href="/incidencias/list">Incidencies</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/localitzacions">Localitzacions</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div>
+            <br>
+            <a href="/">
+                <button href="/" class="blau-btn">Tornar</button>
+            </a>
+            <h1>Gestió d'agents</h1>
+            <br>
+        </div>
+        <form action="/agents/filter" method="get">
+            <label for="dni">DNI:</label>
+            <input type="text" id="dni" name="dni">
+            <button class ="blau-btn" type="submit">Filtrar</button>
+            <button class ="mostrar-tots-btn" href="/agents">Mostrar tots</button>
+        </form>
+
+        <main class="main-container">
+            <section class="table-container">
+                <h2>Lista d'Agents</h2>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">DNI</th>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Cognom</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Teléfon</th>
+                            <th scope="col">Accions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <div th:each="agent, rowStat : ${agents}">
+                        <tr th:id="${rowStat.index}" class="expandable-row">
+                            <td th:text="${agent.dni}" scope="row"></td>
+                            <td th:text="${agent.nombre}"></td>
+                            <td th:text="${agent.apellido}"></td>
+                            <td th:text="${agent.email}"></td>
+                            <td th:text="${agent.telefono}"></td>
+                            <td>
+                                <!-- Botón para mostrar/ocultar detalles -->
+                                <button type="button" 
+                                        class="veure-mes-btn" 
+                                        th:onclick="'toggleDetails(' + ${rowStat.index} + ')'">
+                                    Veure més
+                                </button>
+                                <!-- Enlaces para editar y eliminar -->
+                                <a th:href="@{'/agents/edit/' + ${agent.dni}}" class="btn btn-edit">Editar</a>
+                                <a th:href="@{'/agents/delete/' + ${agent.dni}}" class="btn btn-delete" 
+                                   onclick="return confirm('¿Está seguro de eliminar este Agent?');">Eliminar</a>
+                            </td>
+                        </tr>
+                        <tr th:id="'details-' + ${rowStat.index}" style="display: none;">
+                            <td colspan="6">
+                                <div class="details-container">
+                                    <p><strong>Caducitat DNI:</strong> <span th:text="${agent.caducitatDni}"></span></p>
+                                    <p><strong>Licencia Conducción:</strong> <span th:text="${agent.llicenciaConduccio}"></span></p>
+                                    <p><strong>Caducitat Licencia:</strong> <span th:text="${agent.caducitatLlicenciaConduccio}"></span></p>
+                                    <p><strong>Adreça:</strong> <span th:text="${agent.adreca}"></span></p>
+                                    <p><strong>Tipus Client:</strong> <span th:text="${agent.tipusClient}"></span></p>
+                                    <p><strong>Data de Contracte:</strong> <span th:text="${agent.dataContracte}"></span></p>
+                                    <p><strong>Rol:</strong> <span th:text="${agent.rol}"></span></p>
+                                    <p><strong>Localització:</strong> <span th:text="${agent.localitzacio != null ? agent.localitzacio.CodiPostal + ', ' + agent.localitzacio.comunitatAutonoma + ', '
+                                                                            + agent.localitzacio.provincia + ', ' + agent.localitzacio.ciutat + ', ' + agent.localitzacio.carrer + ', Num '
+                                                                            + agent.localitzacio.num : 'No hi ha Ninguna Localitzacio'}"></span></p>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </div>
+                    </tbody>
+                </table>
+                <button onclick="location.href = '/agents/create'" class="btn btn-create">Crear Nou Agent</button>
+            </section>
+        </main>
+
+
+        <footer>
+            <p>&copy; 2024 Gestió de Agents</p>
+        </footer>
+        <!-- Referencia al script externo -->
+        <script src="/scripts/main.js"></script>
+    </body>
+</html>

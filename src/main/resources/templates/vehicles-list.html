@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió de Vehicles</title>
+    <link rel="stylesheet" href="/styles/stylesForm.css">
+</head>
+<body>
+    <header>
+        <img src="/images/logo.png" alt="Logo">
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar...">
+        </div>
+        <div class="buttons">
+                <div th:if="${isAuthenticated == false}" id="btn-compte" class="dropdown">
+                    <button  >Compte</button>
+                    <div class="dropdown-content">
+                        <a href="/Registre">Registrarse</a>
+                        <a href="/login">Iniciar sessio</a>
+                    </div>
+                </div>
+
+
+                <div th:if="${isAuthenticated}">
+                    <form th:action="@{/logout}" method="post" >
+                        <button id="btn-cerrar-session" type="submit" class="btn btn-danger" style="display: inline;">Cerrar sessio</button>
+                    </form>
+                </div>
+                <!-- Botón desplegable -->
+                <div class="dropdown">
+                    <button>Més</button>
+                    <div th:if="${isAuthenticated}" class="dropdown-content">
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/clients">Clients</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/agents">Agents</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_VEHICLE','ADMIN')" href="/vehicles">Vehicles</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_RESERVES','ADMIN')" href="/reservas/list">Reserves</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_INCIDENCIES','ADMIN')" href="/incidencias/list">Incidencies</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/localitzacions">Localitzacions</a>
+                    </div>
+                </div>
+            </div>
+    </header>
+
+    <div>
+        <br>
+        <a href="/">
+            <button class="blau-btn">Tornar</button>
+        </a>
+        <h1>Gestió de Vehicles</h1>
+        <br>
+    </div>
+
+    <!-- Mensajes Flash -->
+    <div th:if="${error}" class="alert alert-danger">
+        <p th:text="${error}"></p>
+    </div>
+    <div th:if="${success}" class="alert alert-success">
+        <p th:text="${success}"></p>
+    </div>
+
+    <main class="main-container">
+        <section class="table-container">
+            <h2>Lista de Vehicles</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Matrícula</th>
+                        <th scope="col">Marca</th>
+                        <th scope="col">Model</th>
+                        <th scope="col">Accions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <div th:each="vehicle, rowStat : ${vehicles}">
+                        <tr tth:id="${rowStat.index}" class="expandable-row">
+                            <td th:text="${vehicle.matricula}" scope="row"></td>
+                            <td th:text="${vehicle.marca}"></td>
+                            <td th:text="${vehicle.model}"></td>
+                            <td>
+                                <a th:href="@{'/vehicles/edit/' + ${vehicle.matricula}}" class="btn btn-edit">Editar</a>
+                                <a th:href="@{'/vehicles/delete/' + ${vehicle.matricula}}" class="btn btn-delete" 
+                                   onclick="return confirm('Està segur d\'eliminar aquest Vehicle?');">Eliminar</a>
+                                <a th:if="${!vehicle.actiu}" 
+                                   th:href="@{'/vehicles/activate/' + ${vehicle.matricula}}" 
+                                   class="btn btn-activate">Activar</a>
+                                <a th:if="${vehicle.actiu}" 
+                                   th:href="@{'/vehicles/deactivate/' + ${vehicle.matricula}}" 
+                                   class="btn btn-deactivate">Desactivar</a>
+                                
+
+                                <a th:href="@{'/incidencias/create/' + ${vehicle.matricula}}" class="btn btn-create">Crear Incidència</a>
+                                <button type="button" 
+                                        class="veure-mes-btn" 
+                                        th:onclick="|toggleDetails(${rowStat.index})|">
+                                    Veure més
+                                </button>
+                            </td>
+                        </tr>
+                        <!-- Fila con detalles -->
+                        <tr th:id="'details-' + ${rowStat.index}" style="display: none;">
+                            <td colspan="7">
+                                <div class="details-container">
+                                    <p><strong>Any:</strong> <span th:text="${vehicle.any}"></span></p>
+                                    <p><strong>Tipus combustible:</strong> <span th:text="${vehicle.tipusCombustible}"></span></p>
+                                    <p><strong>Descripcio:</strong> <span th:text="${vehicle.descripcio}"></span></p>
+                                    <p><strong>Preu per dia:</strong> <span th:text="${vehicle.preuPerDia}"></span></p>
+                                    <p><strong>Fiança:</strong> <span th:text="${vehicle.fianca}"></span></p>
+                                    <p><strong>Tipus de vehicle:</strong> <span th:text="${vehicle.tipusVehicle}"></span></p>
+                                    <p><strong>Localitzacio:</strong>
+                                        <span th:text="'Localització: ' + ${vehicle.localitzacio != null ? vehicle.localitzacio.CodiPostal 
+                                            + ', ' + vehicle.localitzacio.comunitatAutonoma + ', ' + vehicle.localitzacio.provincia + ', ' + vehicle.localitzacio.ciutat : 'No hi ha Ninguna Localitzacio'}">
+                                        </span>
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    </div>
+                </tbody>
+                </table>
+                <button onclick="location.href = '/vehicles/create'" class="btn btn-create">Crear Nou Vehicle</button>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Gestió de Vehicles</p>
+        </footer>
+
+        <script src="/scripts/main.js"></script>
+    </body>
+</html>

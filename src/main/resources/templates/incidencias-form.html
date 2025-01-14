@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Crear/Editar Incidència</title>
+        <link rel="stylesheet" href="/styles/stylesForm.css">
+    </head>
+    <body>
+        <div class="form-container">
+            <h2 th:text="${incidencia.id != null ? 'Editar Incidencia' : 'Crear Incidencia'}"></h2>
+            <a href="/vehicles" class="btn btn-incident">Tornar</a>
+
+            <!-- Mensajes de éxito o error -->
+            <div th:if="${error}" class="alert alert-danger">
+                <p th:text="${error}"></p>
+            </div>
+            <div th:if="${success}" class="alert alert-success">
+                <p th:text="${success}"></p>
+            </div>
+
+            <form th:action="@{'/incidencias/create/' + ${incidencia.vehicle.matricula}}" method="post" th:object="${incidencia}" enctype="multipart/form-data">
+                <input type="hidden" th:field="*{id}" /> <!-- ID oculto para editar la incidencia -->
+
+                <!-- Vehículo -->
+                <div class="form-group">
+                    <label for="vehicle">Vehicle</label>
+                    <input type="text" id="vehicle" th:field="*{vehicle.matricula}" readonly />
+                </div>
+
+                <!-- Descripción -->
+                <div class="form-group">
+                    <label for="description">Descripció</label>
+                    <input type="text" id="description" th:field="*{description}" required />
+                </div>
+
+                <!-- Coste -->
+                <!-- Coste -->
+                <div class="form-group">
+                    <label for="cost">Cost</label>
+                    <input type="number" id="cost" th:field="*{cost}" step="0.01" required />
+
+                    <!-- Mostrar mensaje de error si el coste no es válido -->
+                    <div th:if="${#fields.hasErrors('cost')}" class="alert alert-danger">
+                        <p th:each="err : ${#fields.errors('cost')}" th:text="${err}"></p>
+                    </div>
+                </div>
+
+
+
+                <!-- Fecha -->
+                <div class="form-group">
+                    <label for="fecha">Data</label>
+                    <input type="date" id="fecha" th:field="*{fecha}" required 
+                           th:value="${incidencia.fecha != null ? #temporals.format(incidencia.fecha, 'yyyy-MM-dd') : ''}" />
+
+                </div>
+
+
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-create">Desar</button>
+                    <a href="/vehicles/list" class="btn btn-cancel">Cancelar</a>
+                </div>
+            </form>
+
+            <!-- Formulario de subida de archivos, visible solo si estás editando -->
+            <form th:if="${incidencia.id != null}" 
+                  th:action="@{'/incidencias/' + ${incidencia.id} + '/upload-file'}" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" required />
+                <input type="text" name="description" placeholder="Descripción del archivo" required />
+                <button type="submit">Subir archivo</button>
+            </form>
+
+        </div>
+    </body>
+</html>

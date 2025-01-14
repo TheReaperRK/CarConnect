@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Reserves</title>
+    <link rel="stylesheet" href="/styles/stylesHistoric.css">
+</head>
+<body>
+    <h1>Informe de Reserves</h1>
+
+    <form method="get" action="/historic/informe-reservas">
+        <label for="clientDni">Filtrar por DNI del cliente:</label>
+        <input type="text" id="clientDni" name="clientDni">
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Vehicle</th>
+                <th>Client</th>
+                <th>Import</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Iterar sobre las reservas -->
+            <tr th:each="reserva : ${historicReserves}">
+                <td th:text="${reserva.startDate}"></td>
+                <td th:text="${reserva.vehicleId}"></td>
+                <td th:text="${reserva.clientDni}"></td>
+                <td th:text="${reserva.totalPrice}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>Total de reserves:</strong> <span th:text="${totalReserves}"></span></p>
+    <p><strong>Preu total:</strong> <span th:text="${totalPrice}"></span></p>
+</body>
+</html>

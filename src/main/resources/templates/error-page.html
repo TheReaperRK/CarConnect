@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error en la Reserva</title>
+    <link rel="stylesheet" href="/styles/stylesError.css">
+</head>
+<body>
+    <div class="container">
+        <h1>S'ha produït un error</h1>
+        <p th:text="${errorMessage}">Missatge d'error</p>
+        <a href="/" class="blau-btn">Tornar a l'inici</a>
+        <button onclick="window.history.back()" class="blau-btn">Tornar enrere</button>
+    </div>
+</body>
+</html>

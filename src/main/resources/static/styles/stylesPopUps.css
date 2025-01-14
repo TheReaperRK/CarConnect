@@ -1,0 +1,258 @@
+/* General Reset */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+/* Header Styles */
+
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #0078d7;
+    color: white;
+}
+
+header img {
+    height: 50px;
+}
+
+header .search-bar {
+    flex-grow: 1;
+    margin: 0 20px;
+}
+
+header .search-bar input[type="text"] {
+    width: 93%;
+    margin: 10px;
+    padding: 15px;
+    border-radius: 20px;
+    border: none;
+    font-size: 18px;  /* Aumento el tamaño de la fuente */
+}
+
+header .buttons {
+    display: flex;
+    gap: 10px;
+    position: relative;
+}
+
+header .buttons button {
+    background-color: white;
+    color: #0078d7;
+    border: 2px solid white;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+header .buttons button:hover {
+    background-color: #005bb5;
+    color: white;
+    border-color: white;
+}
+
+/* Estilos para el botón desplegable */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%; /* Aparece justo debajo del botón */
+    right: 0;
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    z-index: 1000;
+    text-align: left;
+    min-width: 150px;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #0078d7;
+    font-size: 14px;
+    transition: 0.3s ease;
+}
+
+.dropdown-content a:hover {
+    background-color: #0078d7;
+    color: white;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block; /* Mostrar el desplegable al pasar el ratón sobre el botón */
+}
+    .dropdown {
+        position: relative;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 100%; /* Aparece justo debajo del botón */
+        right: 0;
+        background-color: white;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        z-index: 1000;
+        text-align: left;
+        min-width: 150px;
+    }
+
+    .dropdown-content a {
+        display: block;
+        padding: 10px 15px;
+        text-decoration: none;
+        color: #0078d7;
+        font-size: 14px;
+        transition: 0.3s ease;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #0078d7;
+        color: white;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block; /* Mostrar el desplegable al pasar el ratón sobre el botón */
+    }
+
+.logo img {
+    height: 40px;
+}
+
+.search-bar input {
+    width: 300px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.header-buttons button {
+    background: none;
+    border: none;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.header-buttons img {
+    height: 24px;
+}
+
+/* Main Content */
+.vehicle-details {
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.back-button {
+    margin-bottom: 20px;
+}
+
+.back-link {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 18px;
+}
+
+.vehicle-content {
+    display: flex;
+    gap: 20px;
+}
+
+.vehicle-images {
+    flex: 1;
+}
+
+.main-image {
+    width: 75%;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.thumbnail-images img {
+    width: 30%;
+    margin-top: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.vehicle-info {
+    flex: 1;
+}
+
+.vehicle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vehicle-title {
+    margin: 0;
+    font-size: 24px;
+}
+
+.modify-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.modify-button:hover {
+    background-color: #0056b3;
+}
+
+.vehicle-description {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.vehicle-price {
+    font-size: 20px;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.vehicle-specs {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.vehicle-specs li {
+    margin-bottom: 5px;
+}
+
+.reserve-button {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.reserve-button:hover {
+    background-color: #1e7e34;
+}
+

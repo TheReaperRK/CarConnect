@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Detalls del Vehicle</title>
+        <link rel="stylesheet" href="/styles/stylesPopUps.css">
+    </head>
+    <body>
+        <!-- Header -->
+        <header>
+            <img src="/images/logo.png" alt="Logo">
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar...">
+            </div>
+            
+           <div class="buttons">
+                <div th:if="${isAuthenticated == false}" id="btn-compte" class="dropdown">
+                    <button  >Compte</button>
+                    <div class="dropdown-content">
+                        <a href="/Registre">Registrarse</a>
+                        <a href="/login">Iniciar sessio</a>
+                    </div>
+                </div>
+
+
+                <div th:if="${isAuthenticated}">
+                    <form th:action="@{/logout}" method="post" >
+                        <button id="btn-cerrar-session" type="submit" class="btn btn-danger" style="display: inline;">Cerrar sessio</button>
+                    </form>
+                </div>
+                <!-- Botón desplegable -->
+                <div class="dropdown">
+                    <button>Més</button>
+                    <div th:if="${isAuthenticated}" class="dropdown-content">
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/clients">Clients</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/agents">Agents</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_VEHICLE','ADMIN')" href="/vehicles">Vehicles</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_RESERVES','ADMIN')" href="/reservas/list">Reserves</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_INCIDENCIES','ADMIN')" href="/incidencias/list">Incidencies</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/localitzacions">Localitzacions</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main content -->
+        <main class="vehicle-details">
+            <!-- Back Button -->
+            <script src="scripts/main"></script>
+            <div class="back-button">
+                <a href="/" class="back-link">&#8592; Tornar</a>
+            </div>
+
+            <!-- Vehicle Image and Details -->
+            <div class="vehicle-content">
+                <!-- Image Section -->
+                <div class="vehicle-images">
+                    <img th:src="'data:image/jpeg;base64,' + ${vehicleImages[vehicle.matricula]}" 
+                         alt="Imatge del vehicle" 
+                         class="main-image"/>
+
+                    <div class="thumbnail-images">
+                        <img th:each="image : ${restImageBase64List}" 
+                             th:src="'data:image/jpeg;base64,' + ${image}" 
+                             alt="Thumbnail" />
+                    </div>
+                </div>
+
+                <!-- Vehicle Info Section -->
+                <div class="vehicle-info">
+                    <div class="vehicle-header">
+                        <h1 class="vehicle-title" th:text="${vehicle.marca + ' ' + vehicle.model}"/>
+                        <script src="/scripts/main.js"></script>
+                        <button sec:authorize="hasAnyAuthority('EDITAR_VEHICLE','ADMIN')" onclick="redirigir('/vehicles/edit')" class="modify-button" title="Modificar">Modificar</button>
+
+
+
+                    </div>
+                    <p class="vehicle-description">
+                        Descripció del vehicle
+                    </p>
+                    <p class="vehicle-price" th:text="${vehicle.PreuPerDia + '€/día'}"></p>
+                    <ul class="vehicle-specs">
+                        <li th:text="${'Tipus: ' + vehicle.tipusVehicle}"></li>
+                        <li th:text="${'Any:  ' + vehicle.any}"></li>
+                        <li th:text="${'Combustible:  ' + vehicle.tipusCombustible}"></li>
+                    </ul>
+                    <br>
+                    <p th:text="'Localització: ' + ${vehicle.localitzacio != null ? vehicle.localitzacio.codiPostal + ', ' + vehicle.localitzacio.comunitatAutonoma + ', '
+                       + vehicle.localitzacio.provincia + ', ' + vehicle.localitzacio.ciutat  : 'No hi ha Ninguna Localitzacio'}">
+                    </p>
+                    <!-- Reserve Button -->
+                    <button class="reserve-button" onclick="redirigir('/reservas/selected')">Reserva ara</button>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Històric de Reserves</title>
+        <link rel="stylesheet" type="text/css" href="/styles/stylesHistoric.css">
+    </head>
+    <body>
+        <br>
+        <a href="/">
+            <button href="/" class="blau-btn">Tornar</button>
+        </a>
+        <a href="/historic/informe-reservas">
+            <button class="blau-btn">Veure Informe</button>
+        </a>
+        <h1>Històric de reserves</h1>
+        <br>
+        <table>
+            <thead>
+                <tr>
+                    <th>Reserva ID</th>
+                    <th>Client</th>
+                    <th>Vehicle</th>
+                    <th>Data Inici</th>
+                    <th>Data Fi</th>
+                    <th>Preu Total</th>
+                    <th>Estat</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="historic : ${historicReserves}">
+                    <td th:text="${historic.reservaId}"></td>
+                    <td th:text="${historic.nom}"></td>
+                    <td th:text="${historic.vehicleId}"></td>
+                    <td th:text="${historic.startDate}"></td>
+                    <td th:text="${historic.endDate}"></td>
+                    <td th:text="${historic.totalPrice}"></td>
+                    <td th:text="${historic.status}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const searchInput = document.getElementById("searchInput");
+                const tableRows = document.querySelectorAll("tbody tr");
+
+                searchInput.addEventListener("input", function () {
+                    const query = searchInput.value.toLowerCase();
+                    tableRows.forEach(row => {
+                        const cells = Array.from(row.children);
+                        const matches = cells.some(cell => cell.textContent.toLowerCase().includes(query));
+                        if (matches) {
+                            row.style.display = "";
+                            row.classList.add("highlight");
+                        } else {
+                            row.style.display = "none";
+                            row.classList.remove("highlight");
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

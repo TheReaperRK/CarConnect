@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CarConnect - Detalls Reserva</title>
+        <link rel="stylesheet" href="/styles/stylesPagament.css">
+    </head>
+    <body>
+        <header class="header">
+            <div class="logo">
+                <img src="/images/logo.png" alt="CarConnect Logo">
+            </div>
+            <div class="user-info">
+                <span>Benvingut, <span th:text="${client?.nombre ?: 'Usuari'}">Usuari</span></span>
+            </div>
+        </header>
+
+        <main class="details-container">
+            <h1>Confirmació de Reserva</h1>
+
+            <!-- Resum del Vehicle -->
+            <section class="reservation-summary">
+                <h2>Resum del Vehicle</h2>
+                <p><strong>Matrícula:</strong> <span th:text="${vehicle?.matricula ?: 'No disponible'}">XYZ1234</span></p>
+                <p><strong>Marca:</strong> <span th:text="${vehicle?.marca ?: 'No disponible'}">Toyota</span></p>
+                <p><strong>Model:</strong> <span th:text="${vehicle?.model ?: 'No disponible'}">GR Yaris</span></p>
+                <p><strong>Data Recollida:</strong> 
+                    <span th:text="${#temporals.format(reserva?.dataHoraRecollida, 'dd/MM/yyyy')}">18/12/2024</span>
+                </p>
+                <p><strong>Data Entrega:</strong> 
+                    <span th:text="${#temporals.format(reserva?.dataHoraDevolucio, 'dd/MM/yyyy')}">20/12/2024</span>
+                </p>
+                <p><strong>Total:</strong> <span th:text="${#numbers.formatDecimal(reserva?.preuTotal, 1, 'DEFAULT', 2, 'DEFAULT')} + ' €'">0.0 €</span></p>
+            </section>
+
+            <!-- Selecció de Mètode de Pagament -->
+            <section class="payment-method">
+                <h2>Seleccionar mètode de pagament</h2>
+                <form id="paymentForm" method="post" th:action="@{/reservas/guardar}">
+                    <!-- CSRF Token -->
+                    <input type="hidden" name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                    <!-- Camps ocults amb dades de la reserva -->
+                    <input type="hidden" name="client.dni" th:value="${client?.dni}" />
+                    <input type="hidden" name="vehicle.matricula" th:value="${vehicle?.matricula}" />
+                    <input type="hidden" name="dataHoraRecollida" th:value="${#temporals.format(reserva?.dataHoraRecollida, 'yyyy-MM-dd')}" />
+                    <input type="hidden" name="dataHoraDevolucio" th:value="${#temporals.format(reserva?.dataHoraDevolucio, 'yyyy-MM-dd')}" />
+                    <input type="hidden" name="preuTotal" th:value="${reserva?.preuTotal}" />
+
+                    <!-- Selecció de mètode de pagament -->
+                    <div class="method-option">
+                        <label>
+                            <input type="radio" name="metodoPago" value="transfer" onclick="showFields('transfer')" required>
+                            Transferència bancària
+                        </label>
+                        <label>
+                            <input type="radio" name="metodoPago" value="card" onclick="showFields('card')" required>
+                            Targeta bancària
+                        </label>
+                    </div>
+
+                    <!-- Camps dinàmics -->
+                    <section id="transferFields" style="display: none;">
+                        <h3>Detalls per a Transferència Bancària</h3>
+                        <p><strong>Banc:</strong> Banc Exemple</p>
+                        <p><strong>Compte IBAN:</strong> ES1234567890123456789012</p>
+                        <p><strong>Codi SWIFT:</strong> BEXAESMMXXX</p>
+                    </section>
+                    <section id="cardFields" style="display: none;">
+                        <h3>Detalls de la Targeta Bancària</h3>
+                        <p><strong>Nom del Titular:</strong> <span th:text="${client?.nombre}">John Doe</span></p>
+                        <p><strong>Número de Targeta:</strong> **** **** **** 1234</p>
+                        <p><strong>Data de Caducitat:</strong> 12/2025</p>
+                        <p><strong>Codi CVC:</strong> ***</p>
+                    </section>
+
+                    <section class="actions">
+                        <button type="submit">Confirmar</button>
+                        <button type="button" onclick="history.back()">Cancel·lar</button>
+                    </section>
+                </form>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 CarConnect</p>
+        </footer>
+
+        <!-- Script -->
+        <script>
+            function showFields(method) {
+                document.getElementById('transferFields').style.display = 'none';
+                document.getElementById('cardFields').style.display = 'none';
+
+                if (method === 'transfer') {
+                    document.getElementById('transferFields').style.display = 'block';
+                } else if (method === 'card') {
+                    document.getElementById('cardFields').style.display = 'block';
+                }
+            }
+        </script>
+    </body>
+</html>

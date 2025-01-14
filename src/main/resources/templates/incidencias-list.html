@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Gestió de Incidències</title>
+        <link rel="stylesheet" href="/styles/stylesForm.css">
+    </head>
+    <body>
+        <header>
+            <img src="/images/logo.png" alt="Logo">
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar...">
+            </div>
+            <div class="buttons">
+                <div th:if="${isAuthenticated == false}" id="btn-compte" class="dropdown">
+                    <button  >Compte</button>
+                    <div class="dropdown-content">
+                        <a href="/Registre">Registrarse</a>
+                        <a href="/login">Iniciar sessio</a>
+                    </div>
+                </div>
+
+
+                <div th:if="${isAuthenticated}">
+                    <form th:action="@{/logout}" method="post" >
+                        <button id="btn-cerrar-session" type="submit" class="btn btn-danger" style="display: inline;">Cerrar sessio</button>
+                    </form>
+                </div>
+                <!-- Botón desplegable -->
+                <div class="dropdown">
+                    <button>Més</button>
+                    <div th:if="${isAuthenticated}" class="dropdown-content">
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/clients">Clients</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/agents">Agents</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_VEHICLE','ADMIN')" href="/vehicles">Vehicles</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_RESERVES','ADMIN')" href="/reservas/list">Reserves</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_INCIDENCIES','ADMIN')" href="/incidencias/list">Incidencies</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/localitzacions">Localitzacions</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div>
+            <br>
+            <a href="/">
+                <button class="blau-btn">Tornar</button>
+            </a>
+            <div sec:authorize="hasAnyAuthority('HISTORIC_INCIDENCIES','ADMIN')"> 
+                <a href="/historic/historic-incidencia">
+                    <button class="blau-btn">Historic Incidencies</button>
+                </a>
+            </div>
+            <h1>Gestió de Incidències</h1>
+            <br>
+        </div>
+
+        <!-- Bloque para mostrar mensajes -->
+        <div class="message-container">
+            <div th:if="${error}" class="alert-error">
+                <p th:text="${error}"></p>
+            </div>
+            <div th:if="${success}" class="alert-success">
+                <p th:text="${success}"></p>
+            </div>
+        </div>
+
+        <main class="main-container">
+            <section class="table-container">
+                <h2>Lista de Incidències</h2>
+                <form class="filter-form" method="GET" action="/incidencias/filter">
+                    <input type="text" name="matricula" placeholder="Filtrar por Matrícula">
+                    <input type="date" name="fecha" placeholder="Filtrar por Fecha">
+                    <button type="submit">Filtrar</button>
+                </form>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Matrícula</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Accions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(incidencias)}">
+                            <td colspan="4" style="text-align: center;">No hay incidencias para mostrar.</td>
+                        </tr>
+                    <div th:each="incidencia, rowStat: ${incidencias}">
+                        <tr th:id="${rowStat.index}" class="expandable-row">
+                            <td th:text="${incidencia != null ? incidencia.id : 'No disponible'}" scope="row"></td>
+                            <td th:text="${incidencia != null && incidencia.vehicle != null ? incidencia.vehicle.matricula : 'No disponible'}"></td>
+                            <td th:text="${incidencia.oberta ? 'Activada' : 'Desactivada'}"></td>
+
+                            <td>
+                                <a th:href="@{'/incidencias/edit/' + ${incidencia.id}}"
+                                   class="btn btn-edit"
+                                   th:if="${incidencia.oberta}"
+                                   th:attr="disabled=${!incidencia.oberta}">
+                                    Editar
+                                </a>
+                                <a th:href="@{'/incidencias/deactivate/' + ${incidencia.id}}"
+                                   th:text="${incidencia.oberta ? 'Desactivar' : 'Activar'}"
+                                   class="btn btn-toggle"
+                                   onclick="return confirm('¿Está seguro de cambiar el estado de esta incidencia?');">
+                                </a>
+                                <button type="button"
+                                        class="veure-mes-btn"
+                                        th:onclick="'toggleDetails(' + ${rowStat.index} + ')'">
+                                    Veure més
+                                </button>
+                            </td>
+
+                        </tr>
+
+                        <!-- Mostrar detalles si showDetails es true -->
+                        <tr th:id="'details-' + ${rowStat.index}" style="display: none;">
+                            <td colspan="4">
+                                <strong>Descripción:</strong> <span th:text="${incidencia.description}"></span><br>
+                                <strong>Costo:</strong> <span th:text="${incidencia.cost}"></span><br>
+                                <strong>Fecha:</strong> <span th:text="${incidencia.fecha}"></span>
+                                
+                                <!-- Mostrar imágenes y descripciones asociadas -->
+                                <div>
+                                    <h3>Imatges:</h3>
+                                    
+                                            <img th:each="image, index : ${incidenciaImages[incidencia.id]}" 
+                                                 th:src="'data:image/jpeg;base64,' + ${image}" 
+                                                 alt="Imagen de la incidencia" 
+                                                 style="width: 200px; height: auto; border: 1px solid #ccc;" />
+                                      
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                    </div>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Gestió de Incidències</p>
+        </footer>
+        <!-- Referencia al script externo -->
+        <script src="/scripts/main.js"></script>
+    </body>
+</html>

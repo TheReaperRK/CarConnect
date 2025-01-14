@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CarConnect - Confirmació</title>
+        <link rel="stylesheet" href="/styles/stylesIniciReserva.css">
+    </head>
+    <body>
+        <header class="header">
+            <div class="logo">
+                <img src="/images/logo.png" alt="CarConnect Logo">
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar vehicles...">
+            </div>
+            <div class="user-actions">
+                <button class="user-icon">👤</button>
+                <button class="add-icon">➕</button>
+            </div>
+        </header>
+        <div th:if="${errorMessage}" style="color: red;">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <nav class="breadcrumb">
+            <a href="#" th:href="'/vehicles/selected/' + ${vehicle.matricula}">Vehicle</a> > 
+            <a href="#" th:text="${vehicle.tipusVehicle}">Compacte</a>
+        </nav>
+
+        <script src="/scripts/main.js"></script>
+        <div class="back-button">
+            <button class="back-link" onclick="redirigir('/vehicles/selected')">&#8592; Tornar</button>
+        </div>
+
+        <main class="main-container">
+            <section class="vehicle-info">
+                <h1 th:text="${vehicle.marca} + ' ' + ${vehicle.model}">Toyota GR Yaris</h1>
+                <nav class="steps">
+                    Període > Complements > Pagament > Confirmació
+                </nav>
+            </section>
+
+            <section class="reservation">
+                <form th:action="@{/reservas/pagament}" method="get">
+                    <div class="reservation-container">
+                        <!-- Columna 1: Date Picker -->
+                        <div class="date-picker">
+                            <h3>Dia i hora recollida:</h3>
+                            <input type="date" id="pick-up-date" name="dataRecollida" th:min="${fechaHoy}" required 
+                                   th:value="${#dates.format(reserva.dataHoraRecollida, 'yyyy-MM-dd')}">
+                            
+                            <div sec:authorize="hasAuthority('ADMIN')">
+                                <h3>Selecciona un client:</h3>
+                                <select id="client-selection" name="dniCliente" required>
+                                    <option value="">Selecciona un cliente</option>
+                                    <option th:each="clientSelect : ${clients}" 
+                                            th:value="${clientSelect.dni}" 
+                                            th:text="${clientSelect.nombre}">Cliente 1</option>
+                                </select>
+                           
+                           </div>
+                            <div sec:authorize="!hasAuthority('ADMIN')">
+                                <h3>Client reservant: <span th:text="${client.nombre + ' ' + client.apellido +'.'}" ></span> </h3>
+                                <input type="hidden" id="client-selection" name="dniCliente" th:value="${client.dni}"></input>
+                            </div>
+                            
+                            <h3>Dia i hora entrega:</h3>
+                            <input type="date" id="return-date" name="dataDevolucio" th:min="${fechaHoy}" required 
+                                   th:value="${#dates.format(reserva.dataHoraDevolucio, 'yyyy-MM-dd')}">
+
+                            <input type="hidden" name="matricula" th:value="${vehicle.matricula}">
+                        </div>
+
+                        <!-- Columna 2: Pricing -->
+                        <div class="pricing">
+                            <h3 th:text="${vehicle.preuPerDia} + '€/dia'">95€/dia</h3>
+                            <div class="details">
+                                <p>Preu per dies: <span id="price-per-days" th:text="${vehicle.preuPerDia} + ' x ' + ${dies}">95 x 10</span></p>
+                                <p>Fiança : <span id="deposit" th:text="${vehicle.fianca}">25</span></p>
+                                <p>IVA: <span id="vat" th:text="${reserva.preuTotal * 0.21}">21%</span></p>
+                            </div>
+                            <h3 class="total" id="total-price" th:text="'TOTAL: ' + ${reserva.preuTotal} + '€'">TOTAL: 1.179,75€</h3>
+
+                            <button type="submit" class="confirm-btn">Següent</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 CarConnect</p>
+        </footer>
+
+        <script>
+            document.querySelector('form').addEventListener('submit', function (event) {
+            const pickUpDateInput = document.getElementById('pick-up-date');
+            const returnDateInput = document.getElementById('return-date');
+            const pickUpDate = new Date(pickUpDateInput.value);
+            const returnDate = new Date(returnDateInput.value);
+            const today = new Date();
+            // Eliminar la hora para comparar solo fechas
+            today.setHours(0, 0, 0, 0);
+            pickUpDate.setHours(0, 0, 0, 0);
+            returnDate.setHours(0, 0, 0, 0);
+            if (pickUpDate < today) {
+            alert('La fecha de recogida no puede ser anterior a hoy.');
+            event.preventDefault();
+            return;
+            }
+
+            if (returnDate <= pickUpDate) {
+            alert('La fecha de devolución debe ser posterior a la fecha de recogida.');
+            event.preventDefault();
+            return;
+            }
+            });
+            // Ajuste para calcular precios en tiempo real
+            const dailyRate = [[${vehicle.preuPerDia
+            }
+            ]];
+            const depositRate = [[${vehicle.fianca
+            }
+            ]];
+            const vatRate = 0.21;
+            const pickUpDateInput = document.getElementById('pick-up-date');
+            const returnDateInput = document.getElementById('return-date');
+            const pricePerDaysElement = document.getElementById('price-per-days');
+            const vatElement = document.getElementById('vat');
+            const totalPriceElement = document.getElementById('total-price');
+            function calculateDays() {
+            const pickUpDate = new Date(pickUpDateInput.value);
+            const returnDate = new Date(returnDateInput.value);
+            if (!pickUpDate || !returnDate || returnDate <= pickUpDate) {
+            return 0;
+            }
+            const timeDifference = returnDate - pickUpDate;
+            return timeDifference / (1000 * 3600 * 24);
+            }
+
+            function updatePricing() {
+            const days = calculateDays();
+            if (days > 0) {
+            const totalPrice = dailyRate * days;
+            const vat = totalPrice * vatRate;
+            const finalPrice = totalPrice + vat + depositRate;
+            pricePerDaysElement.textContent = `${dailyRate} x ${days}`;
+            vatElement.textContent = vat.toFixed(2) + '€';
+            totalPriceElement.textContent = `TOTAL: ${finalPrice.toFixed(2)}€`;
+            } else {
+            pricePerDaysElement.textContent = `${dailyRate} x 0`;
+            vatElement.textContent = '0.00€';
+            totalPriceElement.textContent = 'TOTAL: 0.00€';
+            }
+            }
+
+            pickUpDateInput.addEventListener('change', updatePricing);
+            returnDateInput.addEventListener('change', updatePricing);
+            updatePricing();
+        </script>
+    </body>
+</html>

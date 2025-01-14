@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:text="${localitzacio.codiPostal != null ? 'Editar Localització' : 'Crear Localització'}"></title>
+        <link rel="stylesheet" href="/styles/stylesForm.css">
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                function actualizarProvincias() {
+                    const comunidad = document.getElementById("comunitatAutonoma").value;
+                    const provinciasMap = JSON.parse(document.getElementById("provinciasData").dataset.provincias);
+                    const provinciasSelect = document.getElementById("provincia");
+                    provinciasSelect.innerHTML = "<option value='' disabled selected>Selecciona una província</option>";
+
+                    if (provinciasMap[comunidad]) {
+                        provinciasMap[comunidad].forEach(provincia => {
+                            const option = document.createElement("option");
+                            option.value = provincia;
+                            option.textContent = provincia;
+                            provinciasSelect.appendChild(option);
+                        });
+                    }
+
+                    // Establecer la provincia seleccionada (si hay alguna)
+                    if (provinciaSeleccionada) {
+                        provinciasSelect.value = provinciaSeleccionada;
+                    }
+                }
+
+                // Cargar las provincias cuando la comunidad cambia
+                document.getElementById("comunitatAutonoma").addEventListener("change", actualizarProvincias);
+
+                // Cargar las provincias al inicio si se está editando
+                const comunidadSeleccionada = document.getElementById("comunitatAutonoma").value;
+                const provinciaSeleccionada = document.getElementById("provincia").value;
+                if (comunidadSeleccionada) {
+                    actualizarProvincias();
+                }
+            });
+
+            function validateForm() {
+                const codiPostal = document.getElementById("codiPostal").value;
+                const numCarrer = document.getElementById("num").value;
+                const regexCodiPostal = /^[0-9]{5}$/;
+
+                // Validar que el código postal tiene 5 dígitos
+                if (!regexCodiPostal.test(codiPostal)) {
+                    alert("El código postal debe ser válido (5 dígitos).");
+                    return false;
+                }
+
+                // Validar que el número del calle no sea negativo
+                if (numCarrer < 0) {
+                    alert("El número del calle no puede ser negativo.");
+                    return false;
+                }
+
+                return true;
+            }
+        </script>
+    </head>
+    <body>
+        <a href="/localitzacions">
+            <button>Tornar</button>
+        </a>
+
+        <h1 th:text="${localitzacio.codiPostal != null ? 'Editar Localització' : 'Crear Localització'}"></h1>
+
+        <!-- Formulario para crear o editar una localización -->
+        <form th:action="${localitzacio.codiPostal != null ? '/localitzacions/edit/' + localitzacio.codiPostal : '/localitzacions/create'}"
+              th:object="${localitzacio}" method="post" onsubmit="return validateForm()">
+
+
+            <!-- Mostrar mensaje de error si existe -->
+            <div th:if="${error != null}" style="color: red;">
+                <p th:text="${error}"></p>
+            </div>
+
+            <label for="codiPostal">Codi Postal:</label>
+            <!-- Si codiPostal es null (es creación), el campo es editable; si no, es readonly (es edición) -->
+            <input type="text" th:field="*{codiPostal}" id="codiPostal" 
+                   th:readonly="${localitzacio.codiPostal != null}" required/><br/>
+
+            <label for="comunitatAutonoma">Comunitat Autònoma:</label>
+            <select id="comunitatAutonoma" th:field="*{comunitatAutonoma}" required>
+                <option value="" disabled selected>Selecciona una comunitat</option>
+                <option th:each="comunitat : ${comunitats}" th:value="${comunitat}" th:text="${comunitat}" 
+                        th:selected="${comunitat == comunidadSeleccionada}"></option>
+            </select><br/>
+
+            <label for="provincia">Província:</label>
+            <select id="provincia" th:field="*{provincia}" required>
+                <option value="" disabled selected>Selecciona una província</option>
+            </select><br/>
+
+            <div id="provinciasData" style="display: none;" th:attr="data-provincias=${comunitatsIProvincias}"></div>
+
+            <label for="ciutat">Ciutat:</label>
+            <input type="text" th:field="*{ciutat}" id="ciutat" required/><br/>
+
+            <label for="carrer">Carrer:</label>
+            <input type="text" th:field="*{carrer}" id="carrer" required/><br/>
+
+            <label for="num">Número:</label>
+            <input type="number" th:field="*{num}" id="num" required/><br/>
+
+            <button type="submit" th:text="${localitzacio.codiPostal != null ? 'Editar Localització' : 'Crear Localització'}"></button>
+        </form>
+    </body>
+</html>

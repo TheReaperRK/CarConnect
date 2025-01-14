@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmació de Reserva</title>
+    <link rel="stylesheet" href="/styles/stylesConfirmacio.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Reserva Confirmada!</h1>
+
+
+        <p>Gràcies, <strong th:text="${clienteNom}">Client</strong>, per la teva reserva.</p>
+
+        <h2>Detalls de la Reserva</h2>
+
+        <p><strong>ID de Reserva:</strong> <span th:text="${reserva.idReserva}">12345</span></p>
+        <p><strong>Vehicle:</strong> <span th:text="${vehicle.matricula}">XYZ1234</span></p>
+        <p><strong>Data Recollida:</strong> <span th:text="${#temporals.format(reserva.dataHoraRecollida, 'dd/MM/yyyy')}">01/12/2024</span></p>
+        <p><strong>Data Devolució:</strong> <span th:text="${#temporals.format(reserva.dataHoraDevolucio, 'dd/MM/yyyy')}">10/12/2024</span></p>
+        <p><strong>Preu Total:</strong> <span th:text="${reserva.preuTotal}">1179.75</span> €</p>
+
+
+        <a href="/">Tornar a l'inici</a>
+    </div>
+</body>
+</html>

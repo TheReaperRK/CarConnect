@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head>
+        <title>Home</title>
+        <link rel="stylesheet" href="/styles/stylesMain.css">
+    </head>
+    <body>
+        <!-- Cabecera con buscador, imagen y botones -->
+        <header>
+            <img src="/images/logo.png" alt="Logo">
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar...">
+            </div>
+            <div class="buttons">
+                <!-- Botones Tots y Filtrar -->
+
+                <div class="filter-dropdown">
+                    <button>Filtrar</button>
+                    <div class="filter-dropdown-content">
+                        <label for="marca">Marca:</label>
+                        <input type="text" id="marca" placeholder="Introduïu marca">
+
+                        <label for="model">Model:</label>
+                        <input type="text" id="model" placeholder="Introduïu model">
+
+                        <label for="tipusCombustible">Tipus de combustible:</label>
+                        <input type="text" id="tipusCombustible" placeholder="Introduïu tipus de combustible">
+
+                        <label for="preu">Preu per dia:</label>
+                        <input type="range" id="preu" min="10" max="200" step="10">
+                        <span id="priceRange">10€</span>
+                    </div>
+                </div>
+                <div th:if="${isAuthenticated == false}" id="btn-compte" class="dropdown">
+                    <button  >Compte</button>
+                    <div class="dropdown-content">
+                        <a href="/Registre">Registrarse</a>
+                        <a href="/login">Iniciar sessio</a>
+                    </div>
+                </div>
+
+
+                <div th:if="${isAuthenticated}">
+                    <form th:action="@{/logout}" method="post" >
+                        <button id="btn-cerrar-session" type="submit" class="btn btn-danger" style="display: inline;">Cerrar sessio</button>
+                    </form>
+                </div>
+                <!-- Botón desplegable -->
+                <div class="dropdown">
+                    <button>Més</button>
+                    <div th:if="${isAuthenticated}" class="dropdown-content">
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/clients">Clients</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/agents">Agents</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_VEHICLE','ADMIN')" href="/vehicles">Vehicles</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_RESERVES','ADMIN')" href="/reservas/list">Reserves</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_INCIDENCIES','ADMIN')" href="/incidencias/list">Incidencies</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/localitzacions">Localitzacions</a>
+                       <!--<a href="/historic">Històric reserves</a>
+                       <a href="/historic/historic-incidencia">Històric incidències</a>-->
+
+
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Eslogan -->
+        <div class="slogan">
+            <p>Lloga el teu camí, descobreix la llibertat sobre rodes</p>
+        </div>
+
+
+
+
+        <!-- Botones de categorías -->
+        <div class="category-buttons">
+            <button>Furgonetes</button>
+            <button>Compactes</button>
+            <button>Esportius</button>
+            <button>Familiars</button>
+        </div>
+
+        <!-- Contenedores de vehículos -->
+        <div class="vehicle-container" th:each="vehicle : ${vehicles}" th:if="${vehicle.actiu}">
+            <!-- Bucle para iterar sobre la lista de vehículos -->
+            <div id="myDiv" class="vehicle-card"
+                 th:attr="data-matricula=${vehicle.matricula}">
+                <script src="/scripts/main.js"></script>
+                <!-- Atributos -->
+                <div class="attributes">
+                    <span>
+                        <!-- Mostrar la imagen -->
+                        <div class="image">
+                            <img th:src="'data:image/jpeg;base64,' + ${vehicleImages[vehicle.matricula]}" 
+                                 alt="Imatge del vehicle" 
+                                 style="max-width: 200px; max-height: 150px;" />
+                    </span>
+                    <span th:text="'Localització: ' + ${vehicle.localitzacio != null ? vehicle.localitzacio.CodiPostal + ', ' + vehicle.localitzacio.comunitatAutonoma + ', '
+                          + vehicle.localitzacio.provincia + ', ' + vehicle.localitzacio.ciutat  : 'No hi ha Ninguna Localitzacio'}">
+                    </span>
+                    <span th:text="'Any:  ' + ${vehicle.any}"></span><br>
+                    <span th:text="'Tipus combustible:  ' + ${vehicle.tipusCombustible}"></span>
+                    <br>
+                </div>
+
+                <!-- Precio (si es aplicable) -->
+                <div class="price" th:if="${vehicle.preuPerDia}">
+                    <span th:text="'€' + ${vehicle.preuPerDia} + '/día'"></span>
+                </div>
+
+                <!-- Nombre del vehículo -->
+                <div class="name" th:text="${vehicle.marca} + ' ' + ${vehicle.model}"></div>
+
+
+            </div>
+        </div>
+    </div>
+    <script>
+        // Actualiza el valor de la barra de rango en tiempo real
+        const priceRange = document.getElementById('priceRange');
+        const preuInput = document.getElementById('preu');
+
+        preuInput.addEventListener('input', function () {
+            priceRange.textContent = `${this.value}€`;
+        });
+    </script>
+</body>
+</html>

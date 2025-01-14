@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Registre</title>
+        <link rel="stylesheet" href="/styles/stylesForm.css">
+    </head>
+    <body>
+        <a href="/">
+            <button class="blau-btn">Tornar</button>
+        </a>
+        <h1>Registre</h1>
+        <form th:action="@{/Registre/create}" th:object="${client}" method="post">     
+            <label>Nom:</label>
+            <input type="text" th:field="*{nombre}" required>
+            <label>Cognom:</label>
+            <input type="text" th:field="*{apellido}" required>
+            <label>DNI:</label>
+            <input type="text" th:field="*{dni}" required>
+            <label>Email:</label>
+            <input type="email" th:field="*{email}" required>
+            <label>Telèfon:</label>
+            <input type="text" th:field="*{telefono}" required>
+            <label for="cadDni">Caducitat DNI:</label>
+            <input type="date" id="cadDni" name="caducDni" value="" th:attr="value=${fechaCaducitatLlicencia}" rerquired>
+            <label>Llicència de Conduir:</label>
+            <input type="text" th:field="*{llicenciaConduccio}" required>
+            <label for="cadLlicencia">Caducitat Llicència:</label>
+            <input type="date" id="cadLlicencia" name="cadLlicenciaCond" value="" th:attr="value=${fechaCaducitatDni}" required>
+            <label>Adreça:</label>
+            <input type="text" th:field="*{adreca}" required>
+
+            <label for="pass">Password:</label>
+            <input type="password" id="pass" name="passwd" th:field="*{password}" required>
+
+
+
+
+            <button type="submit">Registrar-se</button>
+        </form>
+    </body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Llista de Clients</title>
+        <link rel="stylesheet" href="/styles/stylesForm.css">
+    </head>
+    <body>
+        <header>
+            <img src="/images/logo.png" alt="Logo">
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar...">
+            </div>
+            <div class="buttons">
+                <div th:if="${isAuthenticated == false}" id="btn-compte" class="dropdown">
+                    <button  >Compte</button>
+                    <div class="dropdown-content">
+                        <a href="/Registre">Registrarse</a>
+                        <a href="/login">Iniciar sessio</a>
+                    </div>
+                </div>
+
+
+                <div th:if="${isAuthenticated}">
+                    <form th:action="@{/logout}" method="post" >
+                        <button id="btn-cerrar-session" type="submit" class="btn btn-danger" style="display: inline;">Cerrar sessio</button>
+                    </form>
+                </div>
+                <!-- Botón desplegable -->
+                <div class="dropdown">
+                    <button>Més</button>
+                    <div th:if="${isAuthenticated}" class="dropdown-content">
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/clients">Clients</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/agents">Agents</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_VEHICLE','ADMIN')" href="/vehicles">Vehicles</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_RESERVES','ADMIN')" href="/reservas/list">Reserves</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_INCIDENCIES','ADMIN')" href="/incidencias/list">Incidencies</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/localitzacions">Localitzacions</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div>
+            <br>
+            <a href="/">
+                <button href="/" class="blau-btn">Tornar</button>
+            </a>
+            <h1>Gestió de clients</h1>
+            <br>
+        </div>
+        <form action="/clients/filter" method="get">
+            <label for="llicenciaConduccio">Llicencia Conducció:</label>
+            <input type="text" id="llicenciaConduccio" name="llicenciaConduccio">
+
+            <label for="tipusClient">Tipus Client:</label>
+            <select id="tipusClient" name="tipusClient">
+                <option value="">--Selecciona--</option>
+                <option th:each="type : ${T(cat.copernic.CarConnect.Entity.MySQL.Enums.TipusClient).values()}" 
+                        th:value="${type}" 
+                        th:text="${type}"></option>
+            </select>
+            <label for="email">Correu:</label>
+            <input type="text" id="email" name="email">
+            
+            <label for="nacionalitat">Nacionalitat:</label>
+            <select id="nacionalitat" name="nacionalitat">
+                <option value="">--Selecciona--</option>
+                <option th:each="ntype : ${T(cat.copernic.CarConnect.Entity.MySQL.Enums.Nacionalitats).values()}" 
+                        th:value="${ntype}" 
+                        th:text="${ntype}"></option>
+            </select>
+            
+            <label for="telefono">Telefon:</label>
+            <input type="text" id="telefono" name="telefono">
+            
+            <button class ="blau-btn" type="submit">Filtrar</button>
+            <button class ="mostrar-tots-btn" href="/clients">Mostrar tots</button>
+        </form>
+        <main class="main-container">
+            <section class="table-container">
+                <h2>Llista de Clients</h2>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">DNI</th>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Cognom</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Teléfon</th>
+                            <th scope="col">Accions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <div th:each="client, rowStat : ${clients}">
+                        <tr th:id="${rowStat.index}" class="expandable-row">
+                            <td th:text="${client.dni}" scope="row"></td>
+                            <td th:text="${client.nombre}"></td>
+                            <td th:text="${client.apellido}"></td>
+                            <td th:text="${client.email}"></td>
+                            <td th:text="${client.telefono}"></td>
+                            <td>
+                                <!-- Botón para mostrar/ocultar detalles -->
+                                <button type="button" 
+                                        class="veure-mes-btn" 
+                                        th:onclick="'toggleDetails(' + ${rowStat.index} + ')'">
+                                    Veure més
+                                </button>
+                                <!-- Enlaces para editar y eliminar -->
+                                <a th:href="@{'/clients/edit/' + ${client.dni}}" class="btn btn-edit">Editar</a>
+                                <a th:href="@{'/clients/delete/' + ${client.dni}}" class="btn btn-delete" 
+                                   onclick="return confirm('¿Está seguro de eliminar este cliente?');">Eliminar</a>
+                            </td>
+                        </tr>
+                        <!-- Fila con detalles, inicialmente oculta -->
+                        <tr th:id="'details-' + ${rowStat.index}" style="display: none;">
+                            <td colspan="6">
+                                <div class="details-container">
+                                    <p><strong>Caducitat DNI:</strong> <span th:text="${client.caducitatDni}"></span></p>
+                                    <p><strong>Licencia Conducción:</strong> <span th:text="${client.llicenciaConduccio}"></span></p>
+                                    <p><strong>Caducitat Licencia:</strong> <span th:text="${client.caducitatLlicenciaConduccio}"></span></p>
+                                    <p><strong>Adreça:</strong> <span th:text="${client.adreca}"></span></p>
+                                    <p><strong>Tipus Client:</strong> <span th:text="${client.tipusClient}"></span></p>
+                                    <p><strong>Nacionalitat:</strong> <span th:text="${client.nacionalitat}"></span></p>
+                                </div>
+                            </td>
+                        </tr>
+                    </div>
+                    </tbody>
+                </table>
+                <button onclick="location.href = '/clients/create'" class="btn btn-create">Crear Nou Client</button>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Gestió de Clients</p>
+        </footer>
+        <!-- Referencia al script externo -->
+        <script src="/scripts/main.js"></script>
+    </body>
+</html>

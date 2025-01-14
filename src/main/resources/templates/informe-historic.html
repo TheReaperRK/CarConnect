@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Informe d'Incidències</title>
+        <link rel="stylesheet" href="/styles/stylesHistoric.css">
+    </head>
+    <body>
+        <!-- Botón para volver a la lista de incidencias -->
+        <a href="/historic/historic-incidencies">
+            <button class="blau-btn">Tornar</button>
+        </a>
+
+        <h1>Informe d'Incidències</h1>
+
+        <!-- Formulario para filtrar por matrícula -->
+        <form th:action="@{/historic/informe}" method="get">
+            <label for="vehicleId">Filtrar per matrícula:</label>
+            <input type="text" id="vehicleId" name="vehicleId" placeholder="Matrícula del vehicle">
+            <button type="submit">Filtrar</button>
+        </form>
+
+        <br>
+
+        <!-- Tabla con las incidencias -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Vehicle</th>
+                    <th>Cost (€)</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Iteramos sobre las incidencias -->
+                <tr th:each="historic : ${historics}">
+                    <td th:text="${historic.vehicleId}"></td>
+                    <td th:text="${historic.cost != 0 ? historic.cost : 'N/A'}"></td>
+                    <td th:text="${historic.fechaFormateada}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br>
+
+        <!-- Resumen de incidencias -->
+        <h2>Resum</h2>
+        <p>Total d'incidències: <span th:text="${totalIncidencies}"></span></p>
+        <p>Cost total: €<span th:text="${totalCost}"></span></p>
+    </body>
+</html>

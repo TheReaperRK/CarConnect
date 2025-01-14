@@ -1,0 +1,162 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f8f8f8;
+    color: #333;
+    line-height: 1.6;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.header .logo img {
+    height: 40px;
+}
+
+.search-bar input {
+    width: 300px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.user-actions button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.breadcrumb {
+    margin: 10px 20px;
+    font-size: 14px;
+    color: #888;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.vehicle-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.vehicle-info h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.steps {
+    font-size: 16px;
+    color: #888;
+}
+
+.reservation {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.reservation-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.date-picker, .pricing {
+    flex: 1;
+    padding: 10px;
+}
+
+.date-picker h3, .pricing h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+input[type="date"], select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.details p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.details span {
+    font-weight: bold;
+}
+
+.total {
+    font-size: 22px;
+    color: #333;
+    margin-top: 15px;
+}
+
+.confirm-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.confirm-btn:hover {
+    background-color: #0056b3;
+}
+
+.footer {
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 20px;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    color: #888;
+}
+
+.back-button {
+    margin: 10px 20px;
+}
+
+.back-link {
+    background-color: #ddd;
+    border: none;
+    padding: 8px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.back-link:hover {
+    background-color: #ccc;
+}

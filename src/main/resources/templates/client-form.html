@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Formulari Client</title>
+        <link rel="stylesheet" href="/styles/stylesForm.css">
+    </head>
+    <body>
+        <a class="blau-btn"  href="/clients">
+            <button  class="blau-btn" href="/clients">Volver</button>
+        </a>
+        <h1 th:text="${client.dni != null ? 'Editar Cliente' : 'Crear Cliente'}"></h1>
+        <br>
+        <form th:action="@{${client.dni != null ? '/clients/edit/' + client.dni : '/clients/create'}}" th:object="${client}" method="post">
+            <label>DNI:</label>
+            <input type="text" th:field="*{dni}" required>
+            <div th:if="${errorMessage}" style="color: red;">
+                <p class="errorMsg" th:text="${errorMessage}"></p>
+            </div>
+            <label>Nom:</label>
+            <input type="text" th:field="*{nombre}" required>
+            <label>Cognom:</label>
+            <input type="text" th:field="*{apellido}" required>
+            <label>Email:</label>
+            <input type="email" th:field="*{email}" required>
+            <label>Telèfon:</label>
+            <input type="text" th:field="*{telefono}" pattern="\d{9}"required>
+
+            <label for="cadDni">Caducitat DNI:</label>
+            <input type="date" id="cadDni"  th:min="${fechaHoy}" name="caducDni" value="" th:attr="value=${fechaCaducitatLlicencia}" rerquired>
+            
+            
+            <div class="dropdown-checkbox">
+                <label for="dropdown">Llicència de Conduir:</label>
+                <div class="dropdown-header-LL" th:onclick="toggleDropdown()">Selecciona...</div>
+                <div class="dropdown-options-LL" id="dropdown-options-LLC">
+                    <div th:each="option : ${T(cat.copernic.CarConnect.Entity.MySQL.Enums.TipusLlicenciaConduccio).values()}">
+                        <label>
+                            <input type="checkbox" name="llicenciaConduc" th:checked="${llicenciaCond != null and #strings.contains(',' + llicenciaCond + ',', ',' + option + ',')}"
+                                   th:value="${option}" />
+                            <span th:text="${option}"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <label for="cadLlicencia">Caducitat Licencia:</label>
+            <input type="date" id="cadLlicencia" th:min="${fechaHoy}" name="cadLlicenciaCond" value="" th:attr="value=${fechaCaducitatDni}" required>
+
+            <label>Adreça:</label>
+            <input type="text" th:field="*{adreca}" required>
+            <label>Tipus Client:</label>
+            <select th:field="*{tipusClient}">
+                <option th:each="type : ${T(cat.copernic.CarConnect.Entity.MySQL.Enums.TipusClient).values()}"
+                        th:value="${type}" 
+                        th:text="${type}">
+                </option>
+            </select>
+            <label>Contrasenya</label>
+            <input type="password" th:field="*{password}" required>
+            
+            <label>Nacionalitat:</label>
+            <select th:field="*{nacionalitat}">
+                <option th:each="ntype : ${T(cat.copernic.CarConnect.Entity.MySQL.Enums.Nacionalitats).values()}"
+                        th:value="${ntype}" 
+                        th:text="${ntype}">
+                </option>
+                
+            </select>
+            <button type="submit">Guardar</button>
+        </form>
+        <!-- Referencia al script externo -->
+        <script src="/scripts/main.js"></script>
+    </body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Gestió de Reserves</title>
+        <link rel="stylesheet" href="/styles/stylesForm.css">
+    </head>
+    <body>
+        <header>
+            <img src="/images/logo.png" alt="Logo">
+
+            <div class="buttons">
+                <div th:if="${isAuthenticated == false}" id="btn-compte" class="dropdown">
+                    <button  >Compte</button>
+                    <div class="dropdown-content">
+                        <a href="/Registre">Registrarse</a>
+                        <a href="/login">Iniciar sessio</a>
+                    </div>
+                </div>
+
+
+                <div th:if="${isAuthenticated}">
+                    <form th:action="@{/logout}" method="post" >
+                        <button id="btn-cerrar-session" type="submit" class="btn btn-danger" style="display: inline;">Cerrar sessio</button>
+                    </form>
+                </div>
+                <!-- Botón desplegable -->
+                <div class="dropdown">
+                    <button>Més</button>
+                    <div th:if="${isAuthenticated}" class="dropdown-content">
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/clients">Clients</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/agents">Agents</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_VEHICLE','ADMIN')" href="/vehicles">Vehicles</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_RESERVES','ADMIN')" href="/reservas/list">Reserves</a>
+                        <a sec:authorize="hasAnyAuthority('LLISTAR_INCIDENCIES','ADMIN')" href="/incidencias/list">Incidencies</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" href="/localitzacions">Localitzacions</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div>
+            <a href="/">
+                <button class="blau-btn">Tornar</button>
+            </a>
+            <div sec:authorize="hasAnyAuthority('HISTORIC_INCIDENCIES','ADMIN')"> 
+                <a sec:authorize="hasAnyAuthority('HISTORIC_INCIDENCIES','ADMIN')" href="/historic">
+                    <button class="blau-btn">Historic Reserves</button>
+                </a>
+            </div> 
+            <h1>Gestió de Reserves</h1>
+        </div>
+        <div class="search-bar">
+            <!-- Formulario para buscar por matrícula -->
+            <form th:action="@{/reservas/search}" method="get">
+                <input type="text" name="matricula" placeholder="Buscar per matrícula..." th:value="${matriculaBuscada}">
+                <button type="submit" class="btn btn-search">Buscar</button>
+            </form>
+        </div>
+
+        <main class="main-container">
+            <section class="table-container">
+                <h2>Llistat de Reserves</h2>
+                <!-- Mensajes de feedback -->
+                <div th:if="${success}" class="success-message">
+                    <p th:text="${success}"></p>
+                </div>
+                <div th:if="${error}" class="error-message">
+                    <p th:text="${error}"></p>
+                </div>
+
+                <!-- Mensaje si no hay reservas -->
+                <div th:if="${reservas.size() == 0}" class="error-message">
+                    <p>No hi ha reserves que coincideixin amb la matrícula.</p>
+                </div>
+
+                <!-- Tabla de reservas -->
+                <table class="styled-table" th:if="${reservas.size() > 0}">
+                    <thead>
+                        <tr>
+                            <th>ID Reserva</th>
+                            <th>Client</th>
+                            <th>Vehícle</th>
+                            <th>Recollida</th>
+                            <th>Devolució</th>
+                            <th>Preu Total</th>
+                            <th>Accions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="reserva : ${reservas}">
+                            <td th:text="${reserva.idReserva}"></td>
+                            <td th:text="${reserva.client.nombre}"></td>
+                            <td th:text="${reserva.vehicle.matricula}"></td>
+                            <td th:text="${reserva.dataHoraRecollida}"></td>
+                            <td th:text="${reserva.dataHoraDevolucio}"></td>
+                            <td th:text="${reserva.preuTotal}"></td>
+                            <td>
+                                <!-- Botones de acciones -->
+                                <a sec:authorize="hasAnyAuthority('EDITAR_RESERVES','ADMIN')" th:href="@{'/reservas/edit/' + ${reserva.idReserva}}" class="btn btn-edit">Editar</a>
+                                <a sec:authorize="hasAnyAuthority('ELIMINAR_RESERVES','ADMIN')" th:href="@{'/reservas/delete/' + ${reserva.idReserva}}" class="btn btn-delete"
+                                   onclick="return confirm('¿Està segur d\'eliminar aquesta reserva?');">Eliminar</a>
+                                <!-- Mostrar 'Retornar' si retornat es false (0) -->
+                                <a th:if="${!reserva.retornat}" 
+                                   th:href="@{'/reservas/return/' + ${reserva.idReserva}}" 
+                                   class="btn btn-return">Retornar</a>
+
+                                <!-- Mostrar 'Lliurar' si retornat es true (1) -->
+                                <a th:if="${reserva.retornat and !reserva.lliurat}" 
+                                   th:href="@{'/reservas/deliver/' + ${reserva.idReserva}}" 
+                                   class="btn btn-deliver">Lliurar</a>
+                                
+                                
+                                <a th:if="${reserva.lliurat}" 
+                                   th:href="@{'/reservas/list'}" 
+                                   class="btn btn-deliver">Lliurat</a>
+                             
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button onclick="location.href = '/reservas/create'" class="btn btn-create">Crear Nova Reserva</button>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Gestió de Reserves</p>
+        </footer>
+    </body>
+</html>

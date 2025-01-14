@@ -1,0 +1,256 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #0078d7;
+    color: white;
+}
+
+header img {
+    height: 50px;
+}
+
+header .search-bar {
+    flex-grow: 1;
+    margin: 0 20px;
+}
+
+header .search-bar input[type="text"] {
+    width: 93%;
+    margin: 10px;
+    padding: 15px;
+    border-radius: 20px;
+    border: none;
+    font-size: 18px;  /* Aumento el tamaño de la fuente */
+}
+
+header .buttons {
+    display: flex;
+    gap: 10px;
+    position: relative;
+}
+
+header .buttons button {
+    background-color: white;
+    color: #0078d7;
+    border: 2px solid white;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+header .buttons button:hover {
+    background-color: #005bb5;
+    color: white;
+    border-color: white;
+}
+
+
+.slogan {
+    text-align: center;
+    font-size: 18px;
+    margin: 20px 0;
+    color: #555;
+}
+
+.top-buttons,
+.category-buttons {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.slogan {
+    text-align: center;
+    font-size: 18px;
+    margin: 20px 0;
+    color: #555;
+}
+
+.top-buttons,
+.category-buttons {
+    text-align: center;
+    margin: 20px 0;
+}
+
+
+.top-buttons button,
+.category-buttons button {
+    margin: 5px;
+    padding: 12px 20px;
+    background-color: #0078d7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s ease;
+}
+
+.top-buttons button:hover,
+.category-buttons button:hover {
+    background-color: #005bb5;
+}
+
+.vehicle-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.vehicle-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    width: 200px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease;
+}
+
+.vehicle-card img {
+    width: 100%;
+    height: 150px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.vehicle-card:hover {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.vehicle-card .name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.vehicle-card .attributes {
+    font-size: 14px;
+    color: #666;
+    margin: 5px 0;
+}
+
+.vehicle-card .price {
+    font-size: 16px;
+    color: #0078d7;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+/* Estilos para el botón desplegable */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%; /* Aparece justo debajo del botón */
+    right: 0;
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    z-index: 1000;
+    text-align: left;
+    min-width: 150px;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #0078d7;
+    font-size: 14px;
+    transition: 0.3s ease;
+}
+
+.dropdown-content a:hover {
+    background-color: #0078d7;
+    color: white;
+}
+
+
+.dropdown:hover .dropdown-content {
+    display: block; /* Mostrar el desplegable al pasar el ratón sobre el botón */
+}
+
+/* Estilos para el botón de filtro con menú desplegable */
+.filter-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.filter-dropdown button {
+    background-color: #0078d7;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.filter-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-width: 220px;
+    padding: 15px; /* Aumenta el padding si es necesario */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
+}
+
+
+.filter-dropdown:hover .filter-dropdown-content {
+    display: block;
+}
+
+.filter-dropdown-content label {
+    display: block;
+    margin: 5px 0;
+    color: #333; /* Cambia este color según tu preferencia */
+    font-weight: normal;
+}
+
+
+.filter-dropdown-content input[type="text"] {
+    width: 90%;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.filter-dropdown-content input[type="range"] {
+    width: 100%;
+}
+
+/* Precio dinámico del rango */
+#priceRange {
+    display: block;
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #0078d7;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block; /* Mostrar el desplegable al pasar el ratón sobre el botón */
+}
+
+
+

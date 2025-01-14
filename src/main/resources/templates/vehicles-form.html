@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:text="${vehicle.matricula != null ? 'Editar Vehículo' : 'Crear Vehículo'}"></title>
+        <link rel="stylesheet" href="/styles/stylesForm.css">
+    </head>
+    <body>
+        <a href="/vehicles">
+            <button>Tornar</button>
+        </a>
+        <h1 th:text="${vehicle.matricula != null ? 'Editar Vehículo' : 'Crear Vehículo'}"></h1>
+
+        <!-- Formulario para crear o editar vehículo -->
+        <form th:action="${vehicle.matricula != null ? '/vehicles/edit/' + vehicle.matricula : '/vehicles/create'}" 
+              th:object="${vehicle}" method="post" enctype="multipart/form-data">
+
+            <!-- Matrícula -->
+            <label for="matricula">Matrícula:</label>
+            <input type="text" th:field="*{matricula}" id="matricula" th:attr="readonly=${!isCreating}" required/><br/>
+
+            <div th:if="${errorMessage}" style="color: red;">
+                <p class="errorMsg" th:text="${errorMessage}"></p>
+            </div>
+            <!-- Marca -->
+            <label for="marca">Marca:</label>
+            <select th:field="*{marca}" id="marca" onchange="updateModels()" required>
+                <option value="">Seleccione una marca</option>
+                <option value="Toyota">Toyota</option>
+                <option value="Honda">Honda</option>
+                <option value="Ford">Ford</option>
+                <option value="BMW">BMW</option>
+                <option value="Nissan">Nissan</option>
+                <option value="Audi">Audi</option>
+                <option value="Volkswagen">Volkswagen</option>
+                <option value="Mercedes">Mercedes</option>
+                <option value="Peugeot">Peugeot</option>
+                <option value="Renault">Renault</option>
+                <option value="Seat">Seat</option>
+            </select><br/>
+
+            <!-- Modelo -->
+            <label for="model">Model:</label>
+            <select th:field="*{model}" id="model" data-selected="${vehicle.model}" required>
+                <option value="">Seleccione un modelo</option>
+            </select><br/>
+
+            <!-- Año -->
+            <label for="any">Any:</label>
+            <input type="number" min="1990" max="2025" th:field="*{any}" id="any" required/><br/>
+
+            <!-- Tipo de Combustible -->
+            <label for="tipusCombustible">Tipus de Combustible:</label>
+            <select th:field="*{tipusCombustible}" id="tipusCombustible">
+                <option value="Gasolina">Gasolina</option>
+                <option value="Diesel">Dièsel</option>
+                <option value="Eléctrico">Elèctric</option>
+                <option value="Híbrido">Híbrid</option>
+            </select><br/>
+
+            <!-- Número de Registre -->
+            <label for="descripcio">Descripció:</label>
+            <input type="text" id="descripcio" name="descripcio" th:field="*{descripcio}" required><br/>
+
+            <!-- Precio por Día -->
+            <label for="preuPerDia">Preu per Dia:</label>
+            <input type="number" step="0.01" th:field="*{preuPerDia}" id="preuPerDia" required /><br/>
+
+            <!-- Fianza -->
+            <label for="fianca">Fiança:</label>
+            <input type="number" step="0.01" th:field="*{fianca}" id="fianca" required /><br/>
+
+            <!-- Activo -->
+            <label for="actiu">Actiu:</label>
+            <input type="checkbox" th:field="*{actiu}" id="actiu" /><br/>
+
+            <!-- Tipo de Vehículo -->
+            <label for="tipusVehicle">Tipus de Vehicle:</label>
+            <select th:field="*{tipusVehicle}" id="tipusVehicle">
+                <option th:each="tipus : ${tipusVehicles}" th:value="${tipus}" th:text="${tipus}"></option>
+            </select><br/>
+
+            <!-- Localización -->
+            <label for="localitzacio">Localització:</label>
+            <select th:field="*{localitzacio.CodiPostal}" id="localitzacio">
+                <option th:each="localitzacio : ${localitzacions}" 
+                        th:value="${localitzacio.CodiPostal}" 
+                        th:text="${localitzacio.comunitatAutonoma + ' - ' + localitzacio.ciutat}"></option>
+            </select><br/>
+
+            <label for="imagen">Imatges del Vehicle (opcional):</label>
+            <input type="file" id="imagen" name="imagen" accept="image/*" />
+
+            <img id="preview" src="#" alt="Previsualización" style="display: none; max-width: 200px; max-height: 200px;" />
+            <script src="/scripts/main.js"></script>
+
+            <!-- Mostrar el mensaje de error si hay alguno -->
+            <div th:if="${error != null}">
+                <p style="color: red;" th:text="${error}"></p>
+            </div>
+
+            <!-- Botón de envío -->
+            <button type="submit" th:text="${vehicle.matricula != null ? 'Actualizar' : 'Crear'}"></button>
+        </form>
+
+        <script src="/scripts/main.js"></script>
+
+    </body>
+</html>
